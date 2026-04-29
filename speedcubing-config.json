@@ -1,0 +1,224 @@
+{
+    "cubes": {
+        "2x2 Ortega": {
+            "groups": [
+                {
+                    "name": "OLL",
+                    "cases": [
+                        {
+                            "name": "Case 1 (U)",
+                            "sequence": "F (R U R' u') F'",
+                            "startImage": {
+                                "size": 2,
+                                "faces": {
+                                    "U": [
+                                        "G|y",
+                                        "G|y"
+                                    ],
+                                    "R": [
+                                        "G|G"
+                                    ],
+                                    "L": [
+                                        "y|y"
+                                    ],
+                                    "F": [
+                                        "G|G"
+                                    ],
+                                    "B": [
+                                        "G|G"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Case 2 (Pi)",
+                            "sequence": "F (R U R' U') (R U R' U') F'",
+                            "startImage": {
+                                "size": 2,
+                                "faces": {
+                                    "U": [
+                                        "G|G",
+                                        "G|G"
+                                    ],
+                                    "R": [
+                                        "G|G"
+                                    ],
+                                    "L": [
+                                        "y|y"
+                                    ],
+                                    "F": [
+                                        "G|y"
+                                    ],
+                                    "B": [
+                                        "G|y"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Case 3 (H)",
+                            "sequence": "R2 U2 R U2 R2",
+                            "startImage": {
+                                "size": 2,
+                                "faces": {
+                                    "U": [
+                                        "G|G",
+                                        "G|G"
+                                    ],
+                                    "R": [
+                                        "G|G"
+                                    ],
+                                    "L": [
+                                        "G|G"
+                                    ],
+                                    "F": [
+                                        "y|y"
+                                    ],
+                                    "B": [
+                                        "y|y"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Case 4 (Sune)",
+                            "sequence": "(R U R' U) (R U2 R')",
+                            "startImage": {
+                                "size": 2,
+                                "faces": {
+                                    "U": [
+                                        "G|G",
+                                        "y|G"
+                                    ],
+                                    "R": [
+                                        "y|G"
+                                    ],
+                                    "L": [
+                                        "G|G"
+                                    ],
+                                    "F": [
+                                        "G|y"
+                                    ],
+                                    "B": [
+                                        "y|G"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Case 5 (Antisune)",
+                            "sequence": "(R U2 R' U') (R U' R')",
+                            "startImage": {
+                                "size": 2,
+                                "faces": {
+                                    "U": [
+                                        "G|y",
+                                        "G|G"
+                                    ],
+                                    "R": [
+                                        "G|y"
+                                    ],
+                                    "L": [
+                                        "y|G"
+                                    ],
+                                    "F": [
+                                        "y|G"
+                                    ],
+                                    "B": [
+                                        "G|G"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Case 6",
+                            "sequence": "(R U R' U') (R' F R F')",
+                            "startImage": {
+                                "size": 2,
+                                "faces": {
+                                    "U": [
+                                        "G|y",
+                                        "G|y"
+                                    ],
+                                    "R": [
+                                        "G|G"
+                                    ],
+                                    "L": [
+                                        "G|G"
+                                    ],
+                                    "F": [
+                                        "y|G"
+                                    ],
+                                    "B": [
+                                        "y|G"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Case 7",
+                            "sequence": "F (R U') (R' U' R U) (R' F')",
+                            "startImage": {
+                                "size": 2,
+                                "faces": {
+                                    "U": [
+                                        "y|G",
+                                        "G|y"
+                                    ],
+                                    "R": [
+                                        "y|G"
+                                    ],
+                                    "L": [
+                                        "G|G"
+                                    ],
+                                    "F": [
+                                        "y|G"
+                                    ],
+                                    "B": [
+                                        "G|G"
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "PBL",
+                    "cases": [
+                        {
+                            "name": "TEMPLATE",
+                            "sequence": "(R U R' U) (R U2 R')",
+                            "startImage": {
+                                "size": 2,
+                                "faces": {
+                                    "U": [
+                                        "G|G",
+                                        "G|G"
+                                    ],
+                                    "R": [
+                                        "G|G"
+                                    ],
+                                    "L": [
+                                        "G|G"
+                                    ],
+                                    "F": [
+                                        "G|G"
+                                    ],
+                                    "B": [
+                                        "G|G"
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "3x3": {
+            "groups": []
+        },
+        "4x4": {
+            "groups": []
+        }
+    }
+}
