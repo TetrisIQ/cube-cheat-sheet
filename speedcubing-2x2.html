@@ -331,6 +331,18 @@
         }
 
         function createStartImageSvg(startImage, cubeId) {
+            if (startImage && startImage.type === 'image' && startImage.url) {
+                const img = document.createElement('img');
+                img.src = startImage.url;
+                img.alt = 'Cube case image';
+                img.className = 'start-preview';
+                img.style.maxWidth = '120px';
+                img.style.maxHeight = '96px';
+                img.style.display = 'block';
+                return img;
+            }
+
+            // Default SVG rendering
             const size = Number(startImage && startImage.size) || Number(cubeId[0]) || 2;
             const faces = (startImage && startImage.faces) || {};
             const upGrid = normalizeFaceGrid(faces.U, size, "y");

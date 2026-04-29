@@ -196,55 +196,45 @@
                             "name": "Swap UF (T Perm)",
                             "sequence": "y' (R U R' U') (R' F) (R2 U') (R' U' R U) (R' F')",
                             "startImage": {
-                                "size": 2,
-                                "faces": {
-                                    "U": [
-                                        "G|G",
-                                        "b|r"
-                                    ],
-                                    "R": [
-                                        "G|G"
-                                    ],
-                                    "L": [
-                                        "G|G"
-                                    ],
-                                    "F": [
-                                        "G|G"
-                                    ],
-                                    "B": [
-                                        "G|G"
-                                    ]
-                                }
+                                "type": "image",
+                                "url": "https://cubingcheatsheet.com/img/2x2/algorithm-2x2-PBL-Swap-UF.png"
                             }
                         },
                         {
                             "name": "Swap U Diag (Y Perm)",
                             "sequence": "(F R U') (R' U' R U) (R' F') (R U R' U') (R' F R F')",
                             "startImage": {
-                                "size": 2,
-                                "faces": {
-                                    "U": [
-                                        "G|G",
-                                        "G|G"
-                                    ],
-                                    "R": [
-                                        "r|o"
-                                    ],
-                                    "L": [
-                                        "b|b"
-                                    ],
-                                    "F": [
-                                        "r|g"
-                                    ],
-                                    "B": [
-                                        "o|g"
-                                    ]
-                                }
+                                "type": "image",
+                                "url": "https://cubingcheatsheet.com/img/2x2/algorithm-2x2-PBL-Swap-U-Diag.png"
                             }
                         },
                         {
-                            "name": "TEMPLATE",
-                            "sequence": "(R U R' U) (R U2 R')",
+                            "name": "Swap U Diag + D Diag",
+                            "sequence": "R2 F2 R2",
+                            "startImage": {
+                                "type": "image",
+                                "url": "https://cubingcheatsheet.com/img/2x2/algorithm-2x2-PBL-Swap-U-D-Diag.png"
+                            }
+                        },
+                        {
+                            "name": "Swap UF + DF",
+                            "sequence": "(R2 U' R2') (U2' y) (R2 U' R2')",
+                            "startImage": {
+                                "type": "image",
+                                "url": "https://cubingcheatsheet.com/img/2x2/algorithm-2x2-PBL-Swap-UF-DF.png"
+                            }
+                        },
+                        {
+                            "name": "Swap UB + DB",
+                            "sequence": "(R2 U R2) U2 (F2 U F2)",
+                            "startImage": {
+                                "type": "image",
+                                "url": "https://cubingcheatsheet.com/img/2x2/algorithm-2x2-PBL-Swap-UB-DB.png"
+                            }
+                        },
+                        {
+                            "name": "Swap UB + D Diag",
+                            "sequence": "(R U' R) F2 (R' U R')",
                             "startImage": {
                                 "size": 2,
                                 "faces": {
@@ -265,6 +255,22 @@
                                         "G|G"
                                     ]
                                 }
+                            }
+                        },
+                        {
+                            "name": "Swap U Diag + DB",
+                            "sequence": "(L D' L) F2 (L' D L')",
+                            "startImage": {
+                                "type": "image",
+                                "url": "https://example.com/cube-case.png"
+                            }
+                        },
+                        {
+                            "name": "TEMPLATE",
+                            "sequence": "(R U R' U) (R U2 R')",
+                            "startImage": {
+                                "type": "image",
+                                "url": "https://example.com/cube-case.png"
                             }
                         }
                     ]
