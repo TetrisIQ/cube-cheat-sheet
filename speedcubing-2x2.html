@@ -445,6 +445,7 @@
                             // Add '('
                             const paren = document.createElement('span');
                             paren.textContent = '(';
+                            paren.style.alignContent = 'space-around';
                             seq.appendChild(paren);
                             // Add SVG for the move (without the '(')
                             seq.appendChild(createMoveEl(move.slice(1)));
