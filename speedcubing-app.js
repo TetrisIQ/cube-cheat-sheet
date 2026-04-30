@@ -1,5 +1,212 @@
 (() => {
     const { makeSvgEl, createMoveEl, colorFromCode } = window.speedcubingUtils;
+    const SCRAMBLE_SPECS = [
+        {
+            key: "2x2",
+            label: "2x2",
+            moveCount: 9,
+            moves: ["U", "D", "R", "L", "F", "B"],
+            suffixes: ["", "'", "2"]
+        },
+        {
+            key: "3x3",
+            label: "3x3",
+            moveCount: 20,
+            moves: ["U", "D", "R", "L", "F", "B"],
+            suffixes: ["", "'", "2"]
+        },
+        {
+            key: "4x4",
+            label: "4x4",
+            moveCount: 40,
+            moves: ["U", "D", "R", "L", "F", "B", "Uw", "Dw", "Rw", "Lw", "Fw", "Bw"],
+            suffixes: ["", "'", "2"]
+        }
+    ];
+    const AXIS_BY_FACE = {
+        U: "UD",
+        D: "UD",
+        R: "RL",
+        L: "RL",
+        F: "FB",
+        B: "FB"
+    };
+
+    function randomItem(items) {
+        return items[Math.floor(Math.random() * items.length)];
+    }
+
+    function getMoveFace(move) {
+        return (String(move).match(/[URFDLB]/i) || ["U"])[0].toUpperCase();
+    }
+
+    function getMoveAxis(move) {
+        return AXIS_BY_FACE[getMoveFace(move)] || "UD";
+    }
+
+    function generateScramble(specKey) {
+        const spec = SCRAMBLE_SPECS.find((entry) => entry.key === specKey);
+        if (!spec) {
+            return "";
+        }
+
+        const moves = [];
+        while (moves.length < spec.moveCount) {
+            const baseMove = randomItem(spec.moves);
+            const move = `${baseMove}${randomItem(spec.suffixes)}`;
+            const previousMove = moves[moves.length - 1];
+            const earlierMove = moves[moves.length - 2];
+
+            if (previousMove && getMoveFace(previousMove) === getMoveFace(move)) {
+                continue;
+            }
+
+            if (
+                previousMove &&
+                earlierMove &&
+                getMoveAxis(previousMove) === getMoveAxis(move) &&
+                getMoveAxis(earlierMove) === getMoveAxis(move)
+            ) {
+                continue;
+            }
+
+            moves.push(move);
+        }
+
+        return moves.join(" ");
+    }
+
+    function renderMoveSequence(targetEl, sequence) {
+        targetEl.innerHTML = "";
+        tokenizeSequence(sequence).forEach((token) => {
+            targetEl.appendChild(createTokenNode(token));
+        });
+    }
+
+    function createRefreshIcon() {
+        const svg = makeSvgEl("svg", {
+            class: "scramble-action-icon",
+            viewBox: "0 0 24 24",
+            "aria-hidden": "true",
+            focusable: "false"
+        });
+
+        svg.appendChild(makeSvgEl("path", {
+            d: "M19 7v4h-4",
+            fill: "none",
+            stroke: "currentColor",
+            "stroke-width": "2",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round"
+        }));
+        svg.appendChild(makeSvgEl("path", {
+            d: "M18 11a7 7 0 1 0 1.5 6.5",
+            fill: "none",
+            stroke: "currentColor",
+            "stroke-width": "2",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round"
+        }));
+
+        return svg;
+    }
+
+    function createCubeIcon() {
+        const svg = makeSvgEl("svg", {
+            class: "scramble-cube-icon",
+            viewBox: "0 0 24 24",
+            "aria-hidden": "true",
+            focusable: "false"
+        });
+
+        svg.appendChild(makeSvgEl("polygon", {
+            points: "12,2 19,6 12,10 5,6",
+            fill: "#f7d84a",
+            stroke: "#35549d",
+            "stroke-width": "1"
+        }));
+        svg.appendChild(makeSvgEl("polygon", {
+            points: "5,6 12,10 12,19 5,15",
+            fill: "#31b45b",
+            stroke: "#35549d",
+            "stroke-width": "1"
+        }));
+        svg.appendChild(makeSvgEl("polygon", {
+            points: "12,10 19,6 19,15 12,19",
+            fill: "#dc4b4b",
+            stroke: "#35549d",
+            "stroke-width": "1"
+        }));
+
+        return svg;
+    }
+
+    function normalizeCubeKey(cubeKey) {
+        return String(cubeKey || "").match(/\d+x\d+/)?.[0] || "";
+    }
+
+    function createScrambleCard(spec, activeCubeKey) {
+        const card = document.createElement("section");
+        card.className = "scramble-card";
+        if (normalizeCubeKey(activeCubeKey) === spec.key) {
+            card.classList.add("active");
+        }
+
+        const top = document.createElement("div");
+        top.className = "scramble-card-top";
+
+        const label = document.createElement("div");
+        label.className = "scramble-label";
+        label.appendChild(createCubeIcon());
+
+        const labelText = document.createElement("span");
+        labelText.textContent = `${spec.label} scramble`;
+        label.appendChild(labelText);
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "scramble-refresh";
+        button.setAttribute("aria-label", `Generate a new ${spec.label} scramble`);
+        button.appendChild(createRefreshIcon());
+
+        top.appendChild(label);
+        top.appendChild(button);
+
+        const meta = document.createElement("div");
+        meta.className = "scramble-meta";
+        meta.textContent = `${spec.moveCount} moves`;
+
+        const sequence = document.createElement("div");
+        sequence.className = "sequence scramble-sequence";
+
+        const applyScramble = () => {
+            renderMoveSequence(sequence, generateScramble(spec.key));
+        };
+
+        button.addEventListener("click", applyScramble);
+        applyScramble();
+
+        card.appendChild(top);
+        card.appendChild(meta);
+        card.appendChild(sequence);
+        return card;
+    }
+
+    function renderHeaderScrambles(targetEl, activeCubeKey, onlyActiveCube = false) {
+        if (!targetEl) {
+            return;
+        }
+
+        const normalizedActiveCube = normalizeCubeKey(activeCubeKey);
+        const specsToRender = onlyActiveCube && normalizedActiveCube
+            ? SCRAMBLE_SPECS.filter((spec) => spec.key === normalizedActiveCube)
+            : SCRAMBLE_SPECS;
+
+        targetEl.innerHTML = "";
+        specsToRender.forEach((spec) => {
+            targetEl.appendChild(createScrambleCard(spec, activeCubeKey));
+        });
+    }
 
     function normalizeFaceGrid(faceData, size, fallbackCode) {
         const fallbackRows = Array.from({ length: size }, () =>
@@ -267,6 +474,8 @@
     }
 
     window.speedcubingApp = {
+        generateScramble,
+        renderHeaderScrambles,
         renderCubePage
     };
 })();

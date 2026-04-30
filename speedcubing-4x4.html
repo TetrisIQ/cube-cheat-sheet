@@ -22,6 +22,7 @@
                 <a class="cube-tab" href="speedcubing-3x3.html">3x3</a>
                 <a class="cube-tab active" href="speedcubing-4x4.html" aria-current="page">4x4</a>
             </nav>
+            <div id="heroScrambles" class="hero-scrambles"></div>
         </section>
 
         <section class="layout">
@@ -36,6 +37,7 @@
     <script src="speedcubing-utils.js"></script>
     <script src="speedcubing-app.js"></script>
     <script>
+        window.speedcubingApp.renderHeaderScrambles(document.getElementById("heroScrambles"), "4x4", true);
         window.speedcubingApp.renderCubePage(
             "4x4",
             "./speedcubing-config-4x4.json",
