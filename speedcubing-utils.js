@@ -128,11 +128,14 @@ function createMoveSvg(move) {
 function createMoveEl(move) {
     const moveEl = document.createElement("span");
     moveEl.className = "move";
-    moveEl.appendChild(createMoveSvg(move));
+    const normalizedMove = String(move || "").trim();
+    if (!normalizedMove.endsWith("2")) {
+        moveEl.appendChild(createMoveSvg(normalizedMove));
+    }
 
     const label = document.createElement("span");
     label.className = "move-text";
-    label.textContent = move;
+    label.textContent = normalizedMove;
     moveEl.appendChild(label);
 
     return moveEl;
