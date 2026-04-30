@@ -1,0 +1,18 @@
+{
+    "cube": "3x3",
+    "groups": [
+        {
+            "name": "Template",
+            "cases": [
+                {
+                    "name": "TEMPLATE",
+                    "sequence": "(R U R' U) (R U2 R')",
+                    "startImage": {
+                        "type": "image",
+                        "url": "https://example.com/cube-case.png"
+                    }
+                }
+            ]
+        }
+    ]
+}

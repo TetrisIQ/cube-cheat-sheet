@@ -4,32 +4,44 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Speedcubing Cheat Sheet – 4x4</title>
+    <title>Speedcubing Cheat Sheet - 4x4</title>
     <link rel="stylesheet" href="speedcubing-cheatsheet.css">
 </head>
 
 <body>
     <main class="page">
         <section class="hero">
-            <h1>Speedcubing Cheat Sheet – 4x4</h1>
+            <h1>Speedcubing Cheat Sheet</h1>
             <p>
-                Edit your algorithms and visualize notation moves with generated SVG icons.
-                This page is dedicated to 4x4 cube algorithms and tips.
+                Scan cases quickly, verify the starting state from the top view, and jump straight to the correct cube
+                page.
             </p>
-            <a href="index.html">Home</a>
+            <nav class="hero-nav cube-tabs" aria-label="Cube size navigation">
+                <a class="cube-tab" href="index.html">Home</a>
+                <a class="cube-tab" href="speedcubing-2x2.html">2x2 Ortega</a>
+                <a class="cube-tab" href="speedcubing-3x3.html">3x3</a>
+                <a class="cube-tab active" href="speedcubing-4x4.html" aria-current="page">4x4</a>
+            </nav>
         </section>
+
         <section class="layout">
             <section class="panel">
-                <h2>Cheat Sheet</h2>
+                <h2>4x4</h2>
                 <div id="status" class="status"></div>
                 <div id="sheet" class="sheet"></div>
             </section>
         </section>
     </main>
+
+    <script src="speedcubing-utils.js"></script>
+    <script src="speedcubing-app.js"></script>
     <script>
-        // JS logic for 4x4 page (can be customized as needed)
-        const CONFIG_PATH = "./speedcubing-config.json";
-        // ...existing JS logic for loading and displaying 4x4 algorithms...
+        window.speedcubingApp.renderCubePage(
+            "4x4",
+            "./speedcubing-config-4x4.json",
+            document.getElementById("sheet"),
+            document.getElementById("status")
+        );
     </script>
 </body>
 

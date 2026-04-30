@@ -69,14 +69,21 @@ body {
     line-height: 1.45;
 }
 
-.cube-tabs {
+.hero-nav {
     margin-top: 0.85rem;
+}
+
+.cube-tabs {
     display: flex;
     flex-wrap: wrap;
     gap: 0.45rem;
 }
 
 .cube-tab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
     border: 1px solid #8ea4d9;
     background: #eef3ff;
     color: #1f3d88;
@@ -86,12 +93,25 @@ body {
     font-weight: 700;
     letter-spacing: 0.03em;
     cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.16s ease, background-color 0.16s ease, color 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.cube-tab:hover {
+    transform: translateY(-1px);
+    border-color: #6f88c9;
+    box-shadow: 0 8px 16px rgba(33, 64, 154, 0.14);
 }
 
 .cube-tab.active {
     border-color: #22376d;
     background: linear-gradient(180deg, #2a4ea6, #1f3d88);
     color: #fff;
+}
+
+.cube-tab:focus-visible {
+    outline: 3px solid rgba(33, 64, 154, 0.28);
+    outline-offset: 2px;
 }
 
 .layout {
@@ -181,6 +201,7 @@ button:hover {
     margin-top: 0.4rem;
     font-size: 0.88rem;
     color: #2e436f;
+    line-height: 1.4;
 }
 
 .sheet {
@@ -212,8 +233,8 @@ button:hover {
     border-radius: 12px;
     background: #ffffffcf;
     padding: 0.7rem 0.8rem;
-    display: flex;
-    gap: 0.35rem;
+    display: grid;
+    gap: 0.45rem;
     animation: reveal 0.35s ease both;
 }
 
@@ -222,6 +243,8 @@ button:hover {
     justify-content: space-between;
     align-items: baseline;
     gap: 0.8rem;
+    flex: 1;
+    min-width: 0;
 }
 
 .case-top {
@@ -236,8 +259,8 @@ button:hover {
 }
 
 .start-preview {
-    width: 208px;
-    height: 160px;
+    width: 104px;
+    height: 80px;
     flex: 0 0 auto;
 }
 
@@ -252,6 +275,7 @@ button:hover {
 .alg-meta {
     font-size: 0.8rem;
     color: #4f5f84;
+    white-space: nowrap;
 }
 
 .sequence {
@@ -342,5 +366,26 @@ button:hover {
 
     .layout {
         grid-template-columns: 1fr;
+    }
+
+    .case-top {
+        align-items: flex-start;
+    }
+
+    .start-preview {
+        width: 96px;
+        height: 74px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 }
