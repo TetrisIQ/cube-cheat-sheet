@@ -1,4 +1,150 @@
 {
     "cube": "4x4",
-    "groups": []
+    "groups": [
+        {
+            "name": "My Favorite",
+            "cases": [
+                {
+                    "name": "Flip",
+                    "sequence": "Ll' U2 Ll' U2 F2 Ll' F2 Rr U2 Rr' U2 Ll2",
+                    "startImage": {
+                        "type": "default",
+                        "size": 4,
+                        "faces": {
+                            "U": [
+                                "G|r|b|G",
+                                "G|G|G|G",
+                                "G|G|G|G",
+                                "G|b|r|G"
+                            ],
+                            "R": [
+                                "G|G|G|G"
+                            ],
+                            "L": [
+                                "G|G|G|G"
+                            ],
+                            "F": [
+                                "G|G|G|G"
+                            ],
+                            "B": [
+                                "G|G|G|G"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "OLL Parity",
+                    "sequence": "r2 B2 U2 l U2 r' U2 r U2 F2 r F2 l B2 r2",
+                    "startImage": {
+                        "type": "default",
+                        "size": 4,
+                        "faces": {
+                            "U": [
+                                "G|G|G|G",
+                                "G|G|G|G",
+                                "G|G|G|G",
+                                "G|y|y|G"
+                            ],
+                            "R": [
+                                "G|G|G|G"
+                            ],
+                            "L": [
+                                "G|G|G|G"
+                            ],
+                            "F": [
+                                "y|G|G|y"
+                            ],
+                            "B": [
+                                "G|G|G|G"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "PLL Parity",
+                    "sequence": "Uu2 Ll2 U2 l2 U2 Ll2 Uu2",
+                    "startImage": {
+                        "type": "default",
+                        "size": 4,
+                        "faces": {
+                            "U": [
+                                "G|y|y|G",
+                                "G|G|G|G",
+                                "G|G|G|G",
+                                "G|y|y|G"
+                            ],
+                            "R": [
+                                "G|G|G|G"
+                            ],
+                            "L": [
+                                "G|G|G|G"
+                            ],
+                            "F": [
+                                "G|G|G|G"
+                            ],
+                            "B": [
+                                "G|G|G|G"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Side flip",
+                    "sequence": "L2 D Ff2 Ll2 F2 l2 F2 Ll2 Ff2 D' L2",
+                    "startImage": {
+                        "type": "default",
+                        "size": 4,
+                        "faces": {
+                            "U": [
+                                "G|G|G|G",
+                                "G|G|G|r",
+                                "G|G|G|r",
+                                "G|b|b|G"
+                            ],
+                            "R": [
+                                "G|G|G|G"
+                            ],
+                            "L": [
+                                "G|G|G|G"
+                            ],
+                            "F": [
+                                "G|G|G|G"
+                            ],
+                            "B": [
+                                "G|G|G|G"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Corner flip",
+                    "sequence": "Uu2 Ll2 U2 l2 U2 Ll2 Uu2 F' U' F R' F2 U F U F' I' F R",
+                    "startImage": {
+                        "type": "default",
+                        "size": 4,
+                        "faces": {
+                            "U": [
+                                "G|G|G|G",
+                                "G|G|G|G",
+                                "G|G|G|G",
+                                "b|G|G|r"
+                            ],
+                            "R": [
+                                "G|G|G|G"
+                            ],
+                            "L": [
+                                "G|G|G|G"
+                            ],
+                            "F": [
+                                "G|G|G|G"
+                            ],
+                            "B": [
+                                "G|G|G|G"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
 }
