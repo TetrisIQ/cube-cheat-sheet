@@ -441,6 +441,9 @@
 
                 const seq = document.createElement("div");
                 seq.className = "sequence";
+                if (tokens.length > 10) {
+                    seq.classList.add("is-dense");
+                }
                 tokens.forEach((token) => {
                     seq.appendChild(createTokenNode(token));
                 });
