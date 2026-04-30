@@ -418,9 +418,6 @@
                 const caseTop = document.createElement("div");
                 caseTop.className = "case-top";
 
-                const preview = createStartImageSvg(caseItem.startImage, cubeSize);
-                caseTop.appendChild(preview);
-
                 const head = document.createElement("div");
                 head.className = "alg-head";
 
@@ -437,7 +434,23 @@
 
                 head.appendChild(name);
                 head.appendChild(meta);
-                caseTop.appendChild(head);
+                const details = document.createElement("div");
+                details.className = "case-details";
+                details.appendChild(head);
+
+                const cubeGuide = document.createElement("div");
+                cubeGuide.className = "cube-guide";
+
+                const cubeGuideLabel = document.createElement("span");
+                cubeGuideLabel.className = "cube-guide-label";
+
+                const preview = createStartImageSvg(caseItem.startImage, cubeSize);
+                cubeGuide.appendChild(cubeGuideLabel);
+                cubeGuide.appendChild(preview);
+
+                const sequenceLabel = document.createElement("div");
+                sequenceLabel.className = "sequence-label";
+                details.appendChild(sequenceLabel);
 
                 const seq = document.createElement("div");
                 seq.className = "sequence";
@@ -447,9 +460,11 @@
                 tokens.forEach((token) => {
                     seq.appendChild(createTokenNode(token));
                 });
+                details.appendChild(seq);
 
+                caseTop.appendChild(details);
+                caseTop.appendChild(cubeGuide);
                 card.appendChild(caseTop);
-                card.appendChild(seq);
                 block.appendChild(card);
                 caseCount += 1;
             });
@@ -461,6 +476,9 @@
     }
 
     async function renderCubePage(cubeKey, configPath, sheetEl, statusEl) {
+        statusEl.setAttribute("role", "status");
+        statusEl.setAttribute("aria-live", "polite");
+
         try {
             const response = await fetch(`${configPath}?t=${Date.now()}`);
             if (!response.ok) {
@@ -468,10 +486,11 @@
             }
 
             const json = await response.json();
+            statusEl.dataset.state = "ok";
             renderSheet(json, cubeKey, sheetEl, statusEl);
         } catch (err) {
             statusEl.textContent = `${err.message || "Failed to read config."} If opened via file://, use a local server.`;
-            statusEl.style.color = "#a52b2b";
+            statusEl.dataset.state = "error";
             sheetEl.innerHTML = "";
         }
     }
