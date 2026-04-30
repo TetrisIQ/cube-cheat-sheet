@@ -299,6 +299,28 @@ button:focus-visible {
     gap: var(--space-3);
 }
 
+.sheet-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0 0 0.2rem;
+    border-bottom: 1px dashed #9fb3e7;
+}
+
+.sheet-visibility-summary {
+    font-size: 0.78rem;
+    color: #3a4f84;
+    margin-right: auto;
+}
+
+.sheet-control-btn {
+    min-height: 36px;
+    padding: 0.28rem 0.62rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+}
+
 .group-block {
     border: 0;
     border-radius: 0;
@@ -340,6 +362,25 @@ button:focus-visible {
     gap: 0.8rem;
     flex: 1;
     min-width: 0;
+}
+
+.alg-head-actions {
+    display: inline-flex;
+    align-items: center;
+    margin-left: auto;
+}
+
+.case-hide-toggle {
+    min-height: 30px;
+    padding: 0.18rem 0.56rem;
+    border-radius: 999px;
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.alg-card.is-hidden-known {
+    opacity: 0.74;
 }
 
 .case-top {
@@ -522,6 +563,15 @@ button:focus-visible {
 }
 
 @media (max-width: 680px) {
+    .sheet-controls {
+        gap: 0.35rem;
+    }
+
+    .sheet-visibility-summary {
+        width: 100%;
+        margin-right: 0;
+    }
+
     .case-top {
         grid-template-columns: 1fr;
     }

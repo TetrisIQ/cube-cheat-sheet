@@ -31,6 +31,7 @@
         F: "FB",
         B: "FB"
     };
+    const HIDDEN_CASES_KEY_PREFIX = "speedcubing:hiddenCases:";
 
     function randomItem(items) {
         return items[Math.floor(Math.random() * items.length)];
@@ -143,6 +144,41 @@
 
     function normalizeCubeKey(cubeKey) {
         return String(cubeKey || "").match(/\d+x\d+/)?.[0] || "";
+    }
+
+    function getHiddenCasesStorageKey(cubeKey) {
+        return `${HIDDEN_CASES_KEY_PREFIX}${normalizeCubeKey(cubeKey) || String(cubeKey || "unknown")}`;
+    }
+
+    function createCaseId(cubeKey, groupName, caseItem) {
+        const safeGroupName = String(groupName || "").trim();
+        const safeCaseName = String(caseItem?.name || "").trim();
+        const safeSequence = String(caseItem?.sequence || "").trim();
+        return `${normalizeCubeKey(cubeKey)}::${safeGroupName}::${safeCaseName}::${safeSequence}`;
+    }
+
+    function loadHiddenCaseIds(cubeKey) {
+        try {
+            const raw = window.localStorage.getItem(getHiddenCasesStorageKey(cubeKey));
+            const parsed = JSON.parse(raw || "[]");
+            if (!Array.isArray(parsed)) {
+                return new Set();
+            }
+            return new Set(parsed.filter((item) => typeof item === "string" && item.length > 0));
+        } catch {
+            return new Set();
+        }
+    }
+
+    function saveHiddenCaseIds(cubeKey, hiddenCaseIds) {
+        try {
+            window.localStorage.setItem(
+                getHiddenCasesStorageKey(cubeKey),
+                JSON.stringify(Array.from(hiddenCaseIds))
+            );
+        } catch {
+            // Ignore storage failures (private mode/quota) and keep UI usable.
+        }
     }
 
     function createScrambleCard(spec, activeCubeKey) {
@@ -381,10 +417,12 @@
         return createMoveEl(token);
     }
 
-    function renderSheet(config, cubeKey, sheetEl, statusEl) {
+    function renderSheet(config, cubeKey, sheetEl, statusEl, options = {}) {
         sheetEl.innerHTML = "";
         const groups = Array.isArray(config.groups) ? config.groups : [];
         const cubeSize = Number(String(cubeKey).match(/\d+/)?.[0] || 2);
+        const hiddenCaseIds = loadHiddenCaseIds(cubeKey);
+        const showHiddenKnownCases = Boolean(options.showHiddenKnownCases);
 
         if (!groups.length) {
             const empty = document.createElement("div");
@@ -396,6 +434,23 @@
         }
 
         let caseCount = 0;
+        let visibleCaseCount = 0;
+
+        const controls = document.createElement("div");
+        controls.className = "sheet-controls";
+
+        const visibilitySummary = document.createElement("span");
+        visibilitySummary.className = "sheet-visibility-summary";
+
+        const showHiddenBtn = document.createElement("button");
+        showHiddenBtn.type = "button";
+        showHiddenBtn.className = "secondary sheet-control-btn";
+
+        const resetHiddenBtn = document.createElement("button");
+        resetHiddenBtn.type = "button";
+        resetHiddenBtn.className = "secondary sheet-control-btn";
+        resetHiddenBtn.textContent = "Reset known";
+
         groups.forEach((group) => {
             const cases = Array.isArray(group.cases) ? group.cases : [];
             if (!cases.length) {
@@ -411,15 +466,49 @@
             block.appendChild(title);
 
             cases.forEach((caseItem, index) => {
+                caseCount += 1;
+                const caseId = createCaseId(cubeKey, group.name, caseItem);
+                const isHiddenKnownCase = hiddenCaseIds.has(caseId);
+                if (isHiddenKnownCase && !showHiddenKnownCases) {
+                    return;
+                }
+
                 const card = document.createElement("article");
                 card.className = "alg-card";
                 card.style.animationDelay = `${index * 45}ms`;
+                if (isHiddenKnownCase) {
+                    card.classList.add("is-hidden-known");
+                }
 
                 const caseTop = document.createElement("div");
                 caseTop.className = "case-top";
 
                 const head = document.createElement("div");
                 head.className = "alg-head";
+
+                const headActions = document.createElement("div");
+                headActions.className = "alg-head-actions";
+
+                const hideBtn = document.createElement("button");
+                hideBtn.type = "button";
+                hideBtn.className = "secondary case-hide-toggle";
+                hideBtn.textContent = isHiddenKnownCase ? "Unhide" : "Known";
+                hideBtn.setAttribute(
+                    "aria-label",
+                    isHiddenKnownCase
+                        ? `Show ${caseItem.name || "case"} again`
+                        : `Hide ${caseItem.name || "case"} as known`
+                );
+                hideBtn.addEventListener("click", () => {
+                    if (hiddenCaseIds.has(caseId)) {
+                        hiddenCaseIds.delete(caseId);
+                    } else {
+                        hiddenCaseIds.add(caseId);
+                    }
+                    saveHiddenCaseIds(cubeKey, hiddenCaseIds);
+                    renderSheet(config, cubeKey, sheetEl, statusEl, { showHiddenKnownCases });
+                });
+                headActions.appendChild(hideBtn);
 
                 const name = document.createElement("div");
                 name.className = "alg-name";
@@ -434,6 +523,7 @@
 
                 head.appendChild(name);
                 head.appendChild(meta);
+                head.appendChild(headActions);
                 const details = document.createElement("div");
                 details.className = "case-details";
                 details.appendChild(head);
@@ -466,13 +556,46 @@
                 caseTop.appendChild(cubeGuide);
                 card.appendChild(caseTop);
                 block.appendChild(card);
-                caseCount += 1;
+                visibleCaseCount += 1;
             });
 
-            sheetEl.appendChild(block);
+            if (block.querySelector(".alg-card")) {
+                sheetEl.appendChild(block);
+            }
         });
 
-        statusEl.textContent = `Rendered ${caseCount} cases for ${cubeKey}.`;
+        const hiddenCount = hiddenCaseIds.size;
+        const hiddenLabel = hiddenCount === 1 ? "1 known case hidden" : `${hiddenCount} known cases hidden`;
+
+        visibilitySummary.textContent = showHiddenKnownCases
+            ? `Showing all ${caseCount} cases (${hiddenCount} marked known).`
+            : `Showing ${visibleCaseCount} of ${caseCount} cases.`;
+
+        showHiddenBtn.textContent = showHiddenKnownCases ? "Hide known cases" : `Show known (${hiddenCount})`;
+        showHiddenBtn.disabled = hiddenCount === 0;
+        showHiddenBtn.addEventListener("click", () => {
+            renderSheet(config, cubeKey, sheetEl, statusEl, {
+                showHiddenKnownCases: !showHiddenKnownCases
+            });
+        });
+
+        resetHiddenBtn.disabled = hiddenCount === 0;
+        resetHiddenBtn.addEventListener("click", () => {
+            hiddenCaseIds.clear();
+            saveHiddenCaseIds(cubeKey, hiddenCaseIds);
+            renderSheet(config, cubeKey, sheetEl, statusEl, {
+                showHiddenKnownCases: false
+            });
+        });
+
+        controls.appendChild(visibilitySummary);
+        controls.appendChild(showHiddenBtn);
+        controls.appendChild(resetHiddenBtn);
+        sheetEl.prepend(controls);
+
+        statusEl.textContent = hiddenCount
+            ? `Rendered ${visibleCaseCount} of ${caseCount} cases for ${cubeKey} (${hiddenLabel}).`
+            : `Rendered ${visibleCaseCount} cases for ${cubeKey}.`;
     }
 
     async function renderCubePage(cubeKey, configPath, sheetEl, statusEl) {
