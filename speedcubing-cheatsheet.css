@@ -336,8 +336,8 @@ button:hover {
 }
 
 .start-preview {
-    width: 104px;
-    height: 80px;
+    width: 208px;
+    height: 160px;
     flex: 0 0 auto;
 }
 
@@ -454,8 +454,8 @@ button:hover {
     }
 
     .start-preview {
-        width: 96px;
-        height: 74px;
+        width: 208px;
+        height: 160px;
     }
 }
 
