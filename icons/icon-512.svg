@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Speedcubing Cheat Sheet icon">
+  <rect x="0" y="0" width="512" height="512" rx="90" fill="#21409a" />
+  <rect x="58" y="58" width="396" height="396" rx="54" fill="#f9fbff" />
+  <rect x="96" y="96" width="96" height="96" fill="#f7d84a" />
+  <rect x="208" y="96" width="96" height="96" fill="#31b45b" />
+  <rect x="320" y="96" width="96" height="96" fill="#3567d9" />
+  <rect x="96" y="208" width="96" height="96" fill="#dc4b4b" />
+  <rect x="208" y="208" width="96" height="96" fill="#f08a3a" />
+  <rect x="320" y="208" width="96" height="96" fill="#f5f7fb" />
+  <rect x="96" y="320" width="320" height="96" rx="20" fill="#dbe4ff" />
+  <path d="M132 368h248" stroke="#21409a" stroke-width="24" stroke-linecap="round" />
+</svg>

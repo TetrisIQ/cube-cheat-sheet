@@ -4,6 +4,11 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#21409a" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icons/icon-192.svg" type="image/svg+xml" />
     <title>Speedcubing Cheat Sheet - 3x3</title>
     <link rel="stylesheet" href="speedcubing-cheatsheet.css">
 </head>
@@ -36,6 +41,7 @@
 
     <script src="speedcubing-utils.js"></script>
     <script src="speedcubing-app.js"></script>
+    <script src="pwa-register.js"></script>
     <script>
         window.speedcubingApp.renderHeaderScrambles(document.getElementById("heroScrambles"), "3x3", true);
         window.speedcubingApp.renderCubePage(
