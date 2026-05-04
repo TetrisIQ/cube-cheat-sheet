@@ -193,6 +193,12 @@
         return `${normalizeCubeKey(cubeKey)}::${safeGroupName}::${safeCaseName}::${safeSequence}`;
     }
 
+    function createMarkdownGroupId(cubeKey, groupName, markdown) {
+        const safeGroupName = String(groupName || "").trim();
+        const safeMarkdown = String(markdown || "").trim();
+        return `${normalizeCubeKey(cubeKey)}::markdown::${safeGroupName}::${safeMarkdown}`;
+    }
+
     function loadHiddenCaseIds(cubeKey) {
         try {
             const raw = window.localStorage.getItem(getHiddenCasesStorageKey(cubeKey));
@@ -438,6 +444,104 @@
         return svg;
     }
 
+    function escapeHtml(value) {
+        return String(value || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/\"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+    }
+
+    function inlineMarkdownToHtml(value) {
+        let html = escapeHtml(value);
+        html = html.replace(/`([^`]+)`/g, "<code>$1</code>");
+        html = html.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+        html = html.replace(/\*([^*]+)\*/g, "<em>$1</em>");
+        html = html.replace(/~~([^~]+)~~/g, "<del>$1</del>");
+        return html;
+    }
+
+    function markdownToHtml(markdownText) {
+        const lines = String(markdownText || "").split(/\r?\n/);
+        const parts = [];
+        let paragraphLines = [];
+        let listType = null;
+
+        const flushParagraph = () => {
+            if (!paragraphLines.length) {
+                return;
+            }
+            parts.push(`<p>${paragraphLines.map((line) => inlineMarkdownToHtml(line)).join("<br>")}</p>`);
+            paragraphLines = [];
+        };
+
+        const closeList = () => {
+            if (!listType) {
+                return;
+            }
+            parts.push(`</${listType}>`);
+            listType = null;
+        };
+
+        lines.forEach((line) => {
+            const trimmed = line.trim();
+
+            if (!trimmed) {
+                flushParagraph();
+                closeList();
+                return;
+            }
+
+            const headingMatch = trimmed.match(/^(#{1,3})\s+(.+)$/);
+            if (headingMatch) {
+                flushParagraph();
+                closeList();
+                const level = headingMatch[1].length;
+                parts.push(`<h${level}>${inlineMarkdownToHtml(headingMatch[2])}</h${level}>`);
+                return;
+            }
+
+            const unorderedMatch = trimmed.match(/^[-*]\s+(.+)$/);
+            if (unorderedMatch) {
+                flushParagraph();
+                if (listType !== "ul") {
+                    closeList();
+                    listType = "ul";
+                    parts.push("<ul>");
+                }
+                parts.push(`<li>${inlineMarkdownToHtml(unorderedMatch[1])}</li>`);
+                return;
+            }
+
+            const orderedMatch = trimmed.match(/^\d+\.\s+(.+)$/);
+            if (orderedMatch) {
+                flushParagraph();
+                if (listType !== "ol") {
+                    closeList();
+                    listType = "ol";
+                    parts.push("<ol>");
+                }
+                parts.push(`<li>${inlineMarkdownToHtml(orderedMatch[1])}</li>`);
+                return;
+            }
+
+            const quoteMatch = trimmed.match(/^>\s?(.+)$/);
+            if (quoteMatch) {
+                flushParagraph();
+                closeList();
+                parts.push(`<blockquote>${inlineMarkdownToHtml(quoteMatch[1])}</blockquote>`);
+                return;
+            }
+
+            paragraphLines.push(trimmed);
+        });
+
+        flushParagraph();
+        closeList();
+        return parts.join("\n");
+    }
+
     function tokenizeSequence(sequence) {
         return String(sequence || "")
             .match(/\(|\)|[^\s()]+/g) || [];
@@ -472,6 +576,8 @@
 
         let caseCount = 0;
         let visibleCaseCount = 0;
+        let itemCount = 0;
+        let visibleItemCount = 0;
 
         const controls = document.createElement("div");
         controls.className = "sheet-controls";
@@ -490,7 +596,10 @@
 
         groups.forEach((group) => {
             const cases = Array.isArray(group.cases) ? group.cases : [];
-            if (!cases.length) {
+            const markdown = typeof group.markdown === "string" ? group.markdown.trim() : "";
+            const hasMarkdown = markdown.length > 0;
+
+            if (!cases.length && !hasMarkdown) {
                 return;
             }
 
@@ -502,8 +611,56 @@
             title.textContent = group.name || "General";
             block.appendChild(title);
 
+            if (hasMarkdown) {
+                itemCount += 1;
+                const markdownId = createMarkdownGroupId(cubeKey, group.name, markdown);
+                const isHiddenKnownMarkdown = hiddenCaseIds.has(markdownId);
+
+                if (!isHiddenKnownMarkdown || showHiddenKnownCases) {
+                    const markdownEl = document.createElement("div");
+                    markdownEl.className = "group-markdown";
+                    if (isHiddenKnownMarkdown) {
+                        markdownEl.classList.add("is-hidden-known");
+                    }
+
+                    const markdownActions = document.createElement("div");
+                    markdownActions.className = "group-markdown-actions";
+
+                    const markdownHideBtn = document.createElement("button");
+                    markdownHideBtn.type = "button";
+                    markdownHideBtn.className = "secondary case-hide-toggle";
+                    markdownHideBtn.textContent = isHiddenKnownMarkdown ? "Unhide" : "Known";
+                    markdownHideBtn.setAttribute(
+                        "aria-label",
+                        isHiddenKnownMarkdown
+                            ? `Show ${group.name || "markdown notes"} again`
+                            : `Hide ${group.name || "markdown notes"} as known`
+                    );
+                    markdownHideBtn.addEventListener("click", () => {
+                        if (hiddenCaseIds.has(markdownId)) {
+                            hiddenCaseIds.delete(markdownId);
+                        } else {
+                            hiddenCaseIds.add(markdownId);
+                        }
+                        saveHiddenCaseIds(cubeKey, hiddenCaseIds);
+                        renderSheet(config, cubeKey, sheetEl, statusEl, { showHiddenKnownCases });
+                    });
+
+                    const markdownContent = document.createElement("div");
+                    markdownContent.className = "group-markdown-content";
+                    markdownContent.innerHTML = markdownToHtml(markdown);
+
+                    markdownActions.appendChild(markdownHideBtn);
+                    markdownEl.appendChild(markdownActions);
+                    markdownEl.appendChild(markdownContent);
+                    block.appendChild(markdownEl);
+                    visibleItemCount += 1;
+                }
+            }
+
             cases.forEach((caseItem, index) => {
                 caseCount += 1;
+                itemCount += 1;
                 const caseId = createCaseId(cubeKey, group.name, caseItem);
                 const isHiddenKnownCase = hiddenCaseIds.has(caseId);
                 if (isHiddenKnownCase && !showHiddenKnownCases) {
@@ -594,19 +751,20 @@
                 card.appendChild(caseTop);
                 block.appendChild(card);
                 visibleCaseCount += 1;
+                visibleItemCount += 1;
             });
 
-            if (block.querySelector(".alg-card")) {
+            if (block.querySelector(".alg-card, .group-markdown")) {
                 sheetEl.appendChild(block);
             }
         });
 
         const hiddenCount = hiddenCaseIds.size;
-        const hiddenLabel = hiddenCount === 1 ? "1 known case hidden" : `${hiddenCount} known cases hidden`;
+        const hiddenLabel = hiddenCount === 1 ? "1 known item hidden" : `${hiddenCount} known items hidden`;
 
         visibilitySummary.textContent = showHiddenKnownCases
-            ? `Showing all ${caseCount} cases (${hiddenCount} marked known).`
-            : `Showing ${visibleCaseCount} of ${caseCount} cases.`;
+            ? `Showing all ${itemCount} items (${hiddenCount} marked known).`
+            : `Showing ${visibleItemCount} of ${itemCount} items.`;
 
         showHiddenBtn.textContent = showHiddenKnownCases ? "Hide known cases" : `Show known (${hiddenCount})`;
         showHiddenBtn.disabled = hiddenCount === 0;

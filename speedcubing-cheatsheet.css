@@ -340,6 +340,73 @@ button:focus-visible {
     border-bottom: 1px dashed #9fb3e7;
 }
 
+.group-markdown {
+    border-bottom: 1px solid rgba(73, 103, 171, 0.2);
+    padding: var(--space-1) 0 var(--space-2);
+    color: #1e2d4f;
+    line-height: 1.45;
+}
+
+.group-markdown.is-hidden-known {
+    opacity: 0.74;
+}
+
+.group-markdown-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 0.2rem;
+}
+
+.group-markdown-content {
+    min-width: 0;
+}
+
+.group-markdown h1,
+.group-markdown h2,
+.group-markdown h3 {
+    margin: 0.35rem 0 0.45rem;
+    color: #294a94;
+    letter-spacing: 0.03em;
+}
+
+.group-markdown h1 {
+    font-size: 1rem;
+}
+
+.group-markdown h2 {
+    font-size: 0.94rem;
+}
+
+.group-markdown h3 {
+    font-size: 0.88rem;
+}
+
+.group-markdown p,
+.group-markdown blockquote,
+.group-markdown ul,
+.group-markdown ol {
+    margin: 0.4rem 0;
+}
+
+.group-markdown ul,
+.group-markdown ol {
+    padding-left: 1.2rem;
+}
+
+.group-markdown blockquote {
+    border-left: 3px solid #9ab0e8;
+    padding-left: 0.6rem;
+    color: #374f84;
+}
+
+.group-markdown code {
+    font: 700 0.82rem/1 "SF Mono", "Menlo", monospace;
+    background: #edf2ff;
+    color: #1f3d88;
+    border-radius: 6px;
+    padding: 0.08rem 0.26rem;
+}
+
 .alg-card {
     border: 0;
     border-bottom: 1px solid rgba(73, 103, 171, 0.2);

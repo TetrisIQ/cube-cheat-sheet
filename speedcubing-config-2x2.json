@@ -2,6 +2,9 @@
     "cube": "2x2 Ortega",
     "groups": [
         {
+            "markdown": "After solving the first face of the cube you can proceed with the following **OLL** and **PBL** steps."
+        },
+        {
             "name": "OLL",
             "cases": [
                 {

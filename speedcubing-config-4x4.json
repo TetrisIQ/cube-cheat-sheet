@@ -2,6 +2,10 @@
     "cube": "4x4",
     "groups": [
         {
+            "markdown": "After solving the 2x2 centers you can proceed with **Pairing Edges**. Once completed, the cube can be solved like a regular 3x3 puzzle (Reduction). Then, if applicable, look for **OLL-PLL Parity** cases."
+        },
+        {
+            "markdown": "Just my few algorythms I didn't memorize.",
             "name": "My Favorite",
             "cases": [
                 {
