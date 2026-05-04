@@ -77,10 +77,10 @@
         return moves.join(" ");
     }
 
-    function renderMoveSequence(targetEl, sequence) {
+    function renderMoveSequence(targetEl, sequence, cubeSize = 3) {
         targetEl.innerHTML = "";
         tokenizeSequence(sequence).forEach((token) => {
-            targetEl.appendChild(createTokenNode(token));
+            targetEl.appendChild(createTokenNode(token, cubeSize));
         });
     }
 
@@ -112,7 +112,13 @@
         return svg;
     }
 
-    function createCubeIcon() {
+    function createCubeIcon(cubeKey) {
+        const cubeSize = Math.max(2, Math.min(6, Number(String(cubeKey || "").match(/\d+/)?.[0] || 3)));
+        const faceSize = 15;
+        const faceX = 4.5;
+        const faceY = 4.5;
+        const cell = faceSize / cubeSize;
+
         const svg = makeSvgEl("svg", {
             class: "scramble-cube-icon",
             viewBox: "0 0 24 24",
@@ -121,29 +127,59 @@
         });
 
         svg.appendChild(makeSvgEl("polygon", {
-            points: "12,2 19,6 12,10 5,6",
-            fill: "#f7d84a",
+            points: "4.5,4.5 19.5,4.5 17.5,2.5 6.5,2.5",
+            fill: "#ffe78a",
             stroke: "#35549d",
-            "stroke-width": "1"
+            "stroke-width": "0.8"
         }));
+
         svg.appendChild(makeSvgEl("polygon", {
-            points: "5,6 12,10 12,19 5,15",
+            points: "19.5,4.5 19.5,19.5 17.5,17.5 17.5,2.5",
+            fill: "#e8eefc",
+            stroke: "#35549d",
+            "stroke-width": "0.8"
+        }));
+
+        svg.appendChild(makeSvgEl("rect", {
+            x: String(faceX),
+            y: String(faceY),
+            width: String(faceSize),
+            height: String(faceSize),
             fill: "#31b45b",
             stroke: "#35549d",
-            "stroke-width": "1"
+            "stroke-width": "0.95"
         }));
-        svg.appendChild(makeSvgEl("polygon", {
-            points: "12,10 19,6 19,15 12,19",
-            fill: "#dc4b4b",
-            stroke: "#35549d",
-            "stroke-width": "1"
-        }));
+
+        for (let i = 1; i < cubeSize; i += 1) {
+            const offset = faceX + i * cell;
+            svg.appendChild(makeSvgEl("line", {
+                x1: String(offset),
+                y1: String(faceY),
+                x2: String(offset),
+                y2: String(faceY + faceSize),
+                stroke: "#35549d",
+                "stroke-width": "0.75"
+            }));
+
+            svg.appendChild(makeSvgEl("line", {
+                x1: String(faceX),
+                y1: String(offset),
+                x2: String(faceX + faceSize),
+                y2: String(offset),
+                stroke: "#35549d",
+                "stroke-width": "0.75"
+            }));
+        }
 
         return svg;
     }
 
     function normalizeCubeKey(cubeKey) {
         return String(cubeKey || "").match(/\d+x\d+/)?.[0] || "";
+    }
+
+    function cubeSizeFromKey(cubeKey, fallback = 3) {
+        return Math.max(2, Math.min(6, Number(String(cubeKey || "").match(/\d+/)?.[0] || fallback)));
     }
 
     function getHiddenCasesStorageKey(cubeKey) {
@@ -182,6 +218,7 @@
     }
 
     function createScrambleCard(spec, activeCubeKey) {
+        const cubeSize = cubeSizeFromKey(spec.key, 3);
         const card = document.createElement("section");
         card.className = "scramble-card";
         if (normalizeCubeKey(activeCubeKey) === spec.key) {
@@ -193,7 +230,7 @@
 
         const label = document.createElement("div");
         label.className = "scramble-label";
-        label.appendChild(createCubeIcon());
+        label.appendChild(createCubeIcon(spec.key));
 
         const labelText = document.createElement("span");
         labelText.textContent = `${spec.label} scramble`;
@@ -216,7 +253,7 @@
         sequence.className = "sequence scramble-sequence";
 
         const applyScramble = () => {
-            renderMoveSequence(sequence, generateScramble(spec.key));
+            renderMoveSequence(sequence, generateScramble(spec.key), cubeSize);
         };
 
         button.addEventListener("click", applyScramble);
@@ -406,7 +443,7 @@
             .match(/\(|\)|[^\s()]+/g) || [];
     }
 
-    function createTokenNode(token) {
+    function createTokenNode(token, cubeSize = 3) {
         if (token === "(" || token === ")") {
             const span = document.createElement("span");
             span.className = "move-text";
@@ -414,13 +451,13 @@
             return span;
         }
 
-        return createMoveEl(token);
+        return createMoveEl(token, cubeSize);
     }
 
     function renderSheet(config, cubeKey, sheetEl, statusEl, options = {}) {
         sheetEl.innerHTML = "";
         const groups = Array.isArray(config.groups) ? config.groups : [];
-        const cubeSize = Number(String(cubeKey).match(/\d+/)?.[0] || 2);
+        const cubeSize = cubeSizeFromKey(cubeKey, 2);
         const hiddenCaseIds = loadHiddenCaseIds(cubeKey);
         const showHiddenKnownCases = Boolean(options.showHiddenKnownCases);
 
@@ -548,7 +585,7 @@
                     seq.classList.add("is-dense");
                 }
                 tokens.forEach((token) => {
-                    seq.appendChild(createTokenNode(token));
+                    seq.appendChild(createTokenNode(token, cubeSize));
                 });
                 details.appendChild(seq);
 

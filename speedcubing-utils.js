@@ -38,15 +38,57 @@ function directionForMove(move) {
     return move.includes("'") ? oppositeDirection(base) : base;
 }
 
-function highlightRectForFace(face) {
-    const rects = {
-        U: { x: "8", y: "6", width: "20", height: "6" },
-        D: { x: "8", y: "24", width: "20", height: "6" },
-        R: { x: "24", y: "8", width: "6", height: "20" },
-        L: { x: "6", y: "8", width: "6", height: "20" },
-        F: { x: "12", y: "12", width: "12", height: "12" },
-        B: { x: "11", y: "11", width: "14", height: "14" }
+function highlightRectForFace(face, cubeSize = 3) {
+    const size = Math.max(2, Math.min(6, Number(cubeSize) || 3));
+    const gridStart = 6;
+    const gridSpan = 24;
+    const cell = gridSpan / size;
+    const format = (value) => Number(value.toFixed(2)).toString();
+
+    const centerRect = () => {
+        if (size % 2 === 1) {
+            const center = Math.floor(size / 2);
+            return {
+                x: format(gridStart + center * cell),
+                y: format(gridStart + center * cell),
+                width: format(cell),
+                height: format(cell)
+            };
+        }
+
+        const start = size / 2 - 1;
+        return {
+            x: format(gridStart + start * cell),
+            y: format(gridStart + start * cell),
+            width: format(cell * 2),
+            height: format(cell * 2)
+        };
     };
+
+    const rects = {
+        U: { x: format(gridStart), y: format(gridStart), width: format(gridSpan), height: format(cell) },
+        D: {
+            x: format(gridStart),
+            y: format(gridStart + gridSpan - cell),
+            width: format(gridSpan),
+            height: format(cell)
+        },
+        R: {
+            x: format(gridStart + gridSpan - cell),
+            y: format(gridStart),
+            width: format(cell),
+            height: format(gridSpan)
+        },
+        L: { x: format(gridStart), y: format(gridStart), width: format(cell), height: format(gridSpan) },
+        F: centerRect(),
+        B: {
+            x: format(gridStart + cell * 0.5),
+            y: format(gridStart + cell * 0.5),
+            width: format(gridSpan - cell),
+            height: format(gridSpan - cell)
+        }
+    };
+
     return rects[face] || rects.F;
 }
 
@@ -76,8 +118,13 @@ function addArrowToSvg(svg, direction) {
     }));
 }
 
-function createMoveSvg(move) {
+function createMoveSvg(move, cubeSize = 3) {
     const face = (move.match(/[URFDLB]/i) || ["F"])[0].toUpperCase();
+    const size = Math.max(2, Math.min(6, Number(cubeSize) || 3));
+    const gridStart = 6;
+    const gridEnd = 30;
+    const gridSpan = gridEnd - gridStart;
+    const cell = gridSpan / size;
     const svg = makeSvgEl("svg", {
         class: "move-icon",
         viewBox: "0 0 36 36",
@@ -88,25 +135,43 @@ function createMoveSvg(move) {
     svg.appendChild(makeSvgEl("rect", {
         x: "2",
         y: "2",
-        width: "32",
-        height: "32",
+        width: "48",
+        height: "48",
         rx: "6",
         fill: "#f4f7ff",
         stroke: "#90a5d6",
         "stroke-width": "1"
     }));
 
-    const hl = highlightRectForFace(face);
+    const hl = highlightRectForFace(face, size);
     svg.appendChild(makeSvgEl("rect", {
         ...hl,
         rx: "1.8",
         fill: "#c8d6f9"
     }));
 
-    svg.appendChild(makeSvgEl("line", { x1: "13", y1: "6", x2: "13", y2: "30", stroke: "#b7c6ea", "stroke-width": "1" }));
-    svg.appendChild(makeSvgEl("line", { x1: "23", y1: "6", x2: "23", y2: "30", stroke: "#b7c6ea", "stroke-width": "1" }));
-    svg.appendChild(makeSvgEl("line", { x1: "6", y1: "13", x2: "30", y2: "13", stroke: "#b7c6ea", "stroke-width": "1" }));
-    svg.appendChild(makeSvgEl("line", { x1: "6", y1: "23", x2: "30", y2: "23", stroke: "#b7c6ea", "stroke-width": "1" }));
+    for (let i = 1; i < size; i += 1) {
+        const offset = gridStart + cell * i;
+        const offsetText = Number(offset.toFixed(2)).toString();
+
+        svg.appendChild(makeSvgEl("line", {
+            x1: offsetText,
+            y1: String(gridStart),
+            x2: offsetText,
+            y2: String(gridEnd),
+            stroke: "#b7c6ea",
+            "stroke-width": "1"
+        }));
+
+        svg.appendChild(makeSvgEl("line", {
+            x1: String(gridStart),
+            y1: offsetText,
+            x2: String(gridEnd),
+            y2: offsetText,
+            stroke: "#b7c6ea",
+            "stroke-width": "1"
+        }));
+    }
 
     addArrowToSvg(svg, directionForMove(move));
 
@@ -125,12 +190,12 @@ function createMoveSvg(move) {
     return svg;
 }
 
-function createMoveEl(move) {
+function createMoveEl(move, cubeSize = 3) {
     const moveEl = document.createElement("span");
     moveEl.className = "move";
     const normalizedMove = String(move || "").trim();
     if (!normalizedMove.endsWith("2")) {
-        moveEl.appendChild(createMoveSvg(normalizedMove));
+        moveEl.appendChild(createMoveSvg(normalizedMove, cubeSize));
     }
 
     const label = document.createElement("span");
