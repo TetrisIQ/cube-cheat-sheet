@@ -38,7 +38,7 @@
                 },
                 {
                     "name": "OLL Parity",
-                    "sequence": "r2 B2 U2 l U2 r' U2 r U2 F2 r F2 l B2 r2",
+                    "sequence": "r2 B2 U2 l U2 r' U2 r U2 F2 r F2 l' B2 r2",
                     "startImage": {
                         "type": "default",
                         "size": 4,
@@ -122,7 +122,7 @@
                 },
                 {
                     "name": "Corner flip",
-                    "sequence": "Uu2 Ll2 U2 l2 U2 Ll2 Uu2 F' U' F R' F2 U F U F' I' F R",
+                    "sequence": "Uu2 Ll2 U2 l2 U2 Ll2 Uu2 F' U' F R' F2 U F U F' U' F R",
                     "startImage": {
                         "type": "default",
                         "size": 4,
