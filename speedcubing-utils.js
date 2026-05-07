@@ -28,7 +28,7 @@ function directionForMove(move) {
     const face = (move.match(/[URFDLB]/i) || ["F"])[0].toUpperCase();
     const clockwiseByFace = {
         U: "left",
-        D: "left",
+        D: "right",
         R: "up",
         L: "down",
         F: "right",
